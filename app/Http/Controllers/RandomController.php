@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Breakdown;
 use App\Models\Random;
+use Faker\Factory as Faker;
 use Illuminate\Http\Request;
 
 class RandomController extends Controller
@@ -12,9 +14,12 @@ class RandomController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Random $random, Breakdown $breakdown)
     {
         //
+        $random = Random::where('flag', 0)->get();
+        $breakdown = Breakdown::where('random_id', $random->id->first());
+        //return view('ao')->with($arr);
     }
 
     /**
@@ -33,9 +38,27 @@ class RandomController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Random $random_table, Breakdown $breakdown_table)
     {
         //
+        DB::beginTransaction();
+        $random_number = rand(5, 10);
+        $faker = Faker\Factory::create();
+        for ($i = 0; $i <= $random_number; $i++) {
+
+            $random_table->values = $faker->name; //values for random table
+            $random_number = rand(5, 10);
+
+            for ($i = 0; $i <= $random_number; $i++) {
+
+                $breakdown_value = $faker->regexify('[A-Z]{5}[0-4]{3}');
+
+                $breakdown_table->values = $breakdown_value;  //values for breakdown table
+                $breakdown_table->random_id = $random_table->id;  //random id from random table
+            }
+        }
+        DB::commit();
+        return response()->json(['message' => 'Successfully Generated', 'data' => [$random_table, $breakdown_table]]);
     }
 
     /**

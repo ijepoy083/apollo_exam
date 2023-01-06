@@ -16,7 +16,7 @@ class CreateRandomsTable extends Migration
         Schema::create('randoms', function (Blueprint $table) {
             $table->id();
             $table->string('values');
-            $table->integer('flag');
+            $table->integer('flag')->default(0);
         });
     }
 

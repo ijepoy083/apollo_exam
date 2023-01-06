@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Breakdown extends Model
 {
     use HasFactory;
-    public $timestamps =false;
-    public function random(){
+    protected $table = 'breakdowns';
+    public $timestamps = false;
+    public function random()
+    {
         return $this->belongsTo('App\Random', 'random_id', 'id')->withDefault();
     }
 }
