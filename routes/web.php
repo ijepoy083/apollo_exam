@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\RandomController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,9 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('apollo_exam');
-});
+
+
+Route::get('/apollo_exam', [RandomController::class, 'index']);
+Route::post('/generate_name', [RandomController::class, 'store']);
+Route::get('/getBreakdown', [RandomController::class, 'getBreakdown']);
+
 
 Route::get('/welcome', function () {
     return view('welcome');

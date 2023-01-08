@@ -6,6 +6,7 @@ use App\Models\Breakdown;
 use App\Models\Random;
 use Faker\Factory as Faker;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RandomController extends Controller
 {
@@ -16,12 +17,12 @@ class RandomController extends Controller
      */
     public function index(Random $random, Breakdown $breakdown)
     {
-        //
-        $random = Random::where('flag', 0)->get();
-        $breakdown = Breakdown::where('random_id', $random->id->first());
-        //return view('ao')->with($arr);
+        return view('apollo_exam');
     }
-
+    public function getBreakdown(Random $random, Breakdown $breakdown)
+    {
+        return Breakdown::whereIn('random_id', Random::where('flag', 0)->get(['id']))->get();
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -40,25 +41,27 @@ class RandomController extends Controller
      */
     public function store(Request $request, Random $random_table, Breakdown $breakdown_table)
     {
-        //
         DB::beginTransaction();
-        $random_number = rand(5, 10);
-        $faker = Faker\Factory::create();
-        for ($i = 0; $i <= $random_number; $i++) {
+        Random::where('flag', 0)->update(['flag' => '1']);
+        $first_random_number = rand(5, 10);
+        $faker = Faker::create();
+        for ($x = 0; $x < $first_random_number; $x++) {
+            $random_table = new Random();
+            $random_table->values = $faker->name;
+            $random_table->save();
 
-            $random_table->values = $faker->name; //values for random table
-            $random_number = rand(5, 10);
+            $second_random_number =   rand(5, 10);
 
-            for ($i = 0; $i <= $random_number; $i++) {
-
-                $breakdown_value = $faker->regexify('[A-Z]{5}[0-4]{3}');
-
-                $breakdown_table->values = $breakdown_value;  //values for breakdown table
-                $breakdown_table->random_id = $random_table->id;  //random id from random table
+            for ($i = 0; $i < $second_random_number; $i++) {
+                $fake_name = $faker->regexify('[A-Z0-9]{5}');
+                $breakdown_table = new Breakdown();
+                $breakdown_table->values = $fake_name;
+                $breakdown_table->random_id = $random_table->id;
+                $breakdown_table->save();
             }
         }
         DB::commit();
-        return response()->json(['message' => 'Successfully Generated', 'data' => [$random_table, $breakdown_table]]);
+        return response()->json(['message' => 'Successfully Generated']);
     }
 
     /**

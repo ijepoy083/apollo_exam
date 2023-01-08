@@ -10,7 +10,7 @@ class Random extends Model
     use HasFactory;
     protected $table = 'randoms';
     public $timestamps = false;
-    protected $fillable = ['values'];
+    protected $fillable = ['values', 'flag'];
     public function breakdown()
     {
         return $this->hasMany('App\Breakdown', 'id', 'random_id');
