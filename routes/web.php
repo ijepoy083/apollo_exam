@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::get('/apollo_exam', [RandomController::class, 'index']);
+Route::get('/', [RandomController::class, 'index']);
 Route::post('/generate_name', [RandomController::class, 'store']);
 Route::get('/getBreakdown', [RandomController::class, 'getBreakdown']);
 
